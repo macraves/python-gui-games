@@ -34,7 +34,7 @@ class TypingSpeedApp:
             justify="center",
             width=50,
         )
-        self.entry_input.pack(fill="x", padx=20, pady=10)
+        self.entry_input.pack(padx=20, pady=10)
         # Binding Keyboard Entry
         self.root.bind("<Key>", self.update_input)
 
