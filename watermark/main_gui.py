@@ -1,4 +1,23 @@
-"""Graphical User InterFace"""
+"""Graphical User Interface for watermarking images.
+
+This module provides a graphical user interface (GUI) for adding watermarks to images.
+It uses the tkinter library for creating the GUI and the PIL library for image processing.
+
+The main features of this GUI include:
+- Opening an image file
+- Displaying the selected image
+- Adding a watermark to the image
+
+To use this GUI, run the script and click on the "Open Image" button to select an image file.
+The selected image will be displayed in the GUI. Then, click on the "Add Watermark" button to
+select a watermark image file and add the watermark to the main image.
+
+Note: This GUI requires the watermark_funcs module to be imported, which provides the necessary
+functions for adding watermarks to images.
+
+Example:
+    $ python main_gui.py
+"""
 
 import tkinter as tk
 from tkinter import filedialog
@@ -13,7 +32,11 @@ image_files = {}
 
 
 def set_image_label(file_path):
-    """docs"""
+    """Set the image label with the selected image.
+
+    Args:
+        file_path (str): The path to the selected image file.
+    """
     if file_path:
         img = Image.open(file_path)
         width, height = img.size
@@ -28,13 +51,14 @@ def set_image_label(file_path):
 
 
 def image_label():
-    """docs"""
+    """Open an image file and set the image label."""
     file_path = open_image()
     set_image_label(file_path=file_path)
 
 
 def open_image():
     """Opens a file dialog to select an image file.
+
     Returns:
         str: The path to the selected image file.
     """
@@ -43,7 +67,7 @@ def open_image():
 
 
 def add_watermark():
-    """docs"""
+    """Open a watermark image file and add the watermark to the main image."""
     file_path = open_image()
     if file_path:
         main_path = image_files.get("main_image")
