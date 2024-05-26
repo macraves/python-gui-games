@@ -9,6 +9,8 @@ BG_COLOR = "#ea6e28"
 ENTRY_DEFAULT_TEXT = "Enter the text here"
 PARAGRAPH = "This is a sample paragraph for the typing speed application."
 FONT_TEXT = ("Arial", 14)
+COUNT = {"count": 0}
+stack = []
 
 
 class TypingSpeedApp:
@@ -24,11 +26,24 @@ class TypingSpeedApp:
         self.start_time = None
         self.end_time = None
 
-        # Paragraph Label
-        self.label_paragraph = tk.Label(
-            root, text=self.paragraph, font=FONT_TEXT, wraplength=400, bg="white"
+        # # Paragraph Label
+        # self.label_paragraph = tk.Label(
+        #     root, text=self.paragraph, font=FONT_TEXT, wraplength=400, bg="white"
+        # )
+        # self.label_paragraph.grid(row=0, column=0, sticky="n", pady=20)
+
+        # Text Widget
+        self.text_paragraph = tk.Text(
+            root,
+            font=("Arial", 14),
+            wrap="word",
+            bg="white",
+            height=5,
+            width=50,
         )
-        self.label_paragraph.grid(row=0, column=0, sticky="n", pady=20)
+        self.text_paragraph.insert(tk.END, paragraph)
+        self.text_paragraph.config(state="disabled")
+        self.text_paragraph.grid(row=0, column=0, sticky="n", pady=20)
 
         # User Input Entry
         self.entry_input = tk.Entry(
@@ -40,24 +55,39 @@ class TypingSpeedApp:
             font=FONT_TEXT,
         )
         self.entry_input.grid(row=1, column=0, sticky="n", pady=10)
-        self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
-        self.entry_input.bind("<FocusIn>", self.on_entry_click)
+        # self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
+        # self.entry_input.bind("<FocusIn>", self.on_entry_click)
 
         # Binding Keyboard Entry
         self.entry_input.bind("<KeyRelease>", self.update_input)
 
-    def on_entry_click(self, event):
+    # def on_entry_click(self, event):
+    #     """docs"""
+    #     if self.entry_input.get() == ENTRY_DEFAULT_TEXT:
+    #         self.entry_input.delete(0, tk.END)
+    #         self.entry_input.config(fg="black")
+
+    def change_word_color(self, word: str, is_true: bool, reset=False):
         """docs"""
-        if self.entry_input.get() == ENTRY_DEFAULT_TEXT:
-            self.entry_input.delete(0, tk.END)
-            self.entry_input.config(fg="black")
+
+    def track_paragraph(self, count, char):
+        """docs"""
 
     def update_input(self, event):
         """docs"""
+
+        count = COUNT["count"]
         char = event.keysym
+        if char in ("Shift_L", "Shift_R") and len(stack) == 0:
+            stack.append(str.upper)
         if char not in all_keysyms:
-            letter = self.entry_input.get()
-            print(letter)
+            if stack:
+                method = stack.pop()
+                char = method(char)
+            # word = self.entry_input.get()
+            # self.track_paragraph(count=COUNT, char=word)
+            print(char)
+            COUNT["count"] += 1
 
 
 window = tk.Tk()
