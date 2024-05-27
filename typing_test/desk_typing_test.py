@@ -73,16 +73,21 @@ class TypingSpeedApp:
     #         self.entry_input.delete(0, tk.END)
     #         self.entry_input.config(fg="black")
 
-    def change_leter_color(self, index, count, color):
-        """docs"""
+    def get_paragraph_index(self, index, count):
+        """doc"""
         length = 0
         if index != 0:
             for i in range(index):
                 length += len(LST[i]) + 1
         else:
             length = count
+        return length, self.paragraph[length]
 
-        tag_name = f"{index}.{LST[index]}.{count}{LST[index][count]}"
+    def change_leter_color(self, index, count, color):
+        """docs"""
+        length, _ = self.get_paragraph_index(index, count)
+
+        tag_name = f"{index}.{LST[index]}.{LST[index]}{count}"
         self.text_paragraph.tag_add(
             tag_name, f"1.{length+count}", f"1.{length+count+1}"
         )
@@ -94,22 +99,32 @@ class TypingSpeedApp:
         var["index"] += 1
         var["count"] = 0
 
+    def print_details(self, index, count):
+        """docs"""
+        print(
+            f"{self.get_paragraph_index(index, count)[0]}. index "
+            f"{self.get_paragraph_index(index, count)[1]}"
+        )
+
     def track_word_character(self, count, letter):
         """docs"""
         index = var["index"]
+        self.print_details(index, count)
         word = LST[index]
         if count < len(word):
             if letter == word[count]:
-                var["word"] += letter
                 self.change_leter_color(index=index, count=count, color="green")
             else:
                 print(letter + " wrong entry")
                 self.change_leter_color(index=index, count=count, color="red")
+            var["word"] += letter
             var["count"] += 1
         if var["word"] == word:
             container.append(var["word"])
             self.next_word_set()
             var["next"] = True
+        if len(var["word"]) == len(word):
+            self.next_word_set()
 
     def update_input(self, event):
         """docs"""
@@ -124,16 +139,20 @@ class TypingSpeedApp:
             if var["count"] > 0:
                 var["count"] -= 1
                 var["word"] = var["word"][:-1]
+
                 self.change_leter_color(
                     index=var["index"], count=var["count"], color="black"
                 )
 
             else:
                 var["index"] -= 1
+                var["index"] = max(var["index"], 0)
+                var["count"] = len(LST[var["index"]])
+                self.change_leter_color(
+                    index=var["index"], count=var["count"], color="black"
+                )
         # Never let the word index (count) less than 0
         var["count"] = max(var["count"], 0)
-        # No letter left So pass the previous word
-        var["index"] = max(var["index"], 0)
 
         # in a case any letter entered, enable space
         if char == "space" and var["count"] > 0:
