@@ -96,19 +96,23 @@ class TypingSpeedApp:
         list_index = var["index"]
         start = p_index
         end = p_index + 1
+        tag_name = f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
         # Space Conditions
-        if reset and var["count"] != len(LST[list_index]):
+        if reset and var["count"] != len(LST[list_index]) - 1:
             start = p_index - (len(LST[list_index]) + 1)
             end = p_index - 1
-        elif reset and color == "black":
+        if reset and color == "black":
             start = p_index
             end = p_index + 1
-        elif reset and color == "gold2":
+            tag_name = f"{LST[list_index]}{color}"
+        if reset and color == "gold2":
             start = p_index - (len(LST[list_index]))
             end = p_index
-
-        tag_name = f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
-
+            tag_name = f"{LST[list_index]}{color}"
+        else:
+            tag_name = (
+                f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
+            )
         self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
         self.text_paragraph.tag_config(tag_name, foreground=color)
 
