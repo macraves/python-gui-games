@@ -175,9 +175,9 @@ class TypingSpeedApp:
         # if There is entry for word then pass next word
         if char == "space" and var["count"] > 0:
             if var["word"] == LST[var["index"]]:
-                self.change_letter_color(
-                    p_index=var["p_index"], color="gold2", reset=True
-                )
+                # self.change_letter_color(
+                #     p_index=var["p_index"], color="gold2", reset=True
+                # )
                 var["p_index"] += 1
             else:
                 # Jumping next word beggining
@@ -188,15 +188,20 @@ class TypingSpeedApp:
                 )
             self.next_word_set()
             return
-
+        self.variables()
         if char not in all_keysyms:
             if stack:
                 method = stack.pop()
                 char = method(char)
             self.track_word_character(count=var["count"], letter=char)
 
+    def variables(self):
+        """docs"""
+        message = (f"Word: {LST[var["index"]][var['count']]}"
+                   f"Paragraph: {self.paragraph[var['p_index']]}")
+        dict_map = map(lambda x: f"{x[0]}: {x[1]} {message}", var.items())
+        print("\n\n".join(dict_map))
 
-# t is a
 
 window = tk.Tk()
 window.grid_rowconfigure(0, weight=1)
