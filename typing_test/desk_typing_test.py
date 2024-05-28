@@ -101,9 +101,9 @@ class TypingSpeedApp:
         first_part = current_text[start:end]
         second_part = current_text[end:]
 
-        tag_name = f"{word}[{start}]:{end}] {color}"
+        tag_name = f"{word}[{start}]:{end}]"
         # Delete current text content
-        self.text_paragraph.delete("1.0", tk.END)
+        self.text_paragraph.delete(f"1.{start}", tk.END)
         self.text_paragraph.insert(tk.END, first_part)
         self.text_paragraph.insert(tk.END, second_part)
 
