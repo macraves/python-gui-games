@@ -70,9 +70,8 @@ class TypingSpeedApp:
 
     # def on_entry_click(self, event):
     #     """docs"""
-    #     if self.entry_input.get() == ENTRY_DEFAULT_TEXT:
-    #         self.entry_input.delete(0, tk.END)
-    #         self.entry_input.config(fg="black")
+    #     self.entry_input.delete(0, tk.END)
+    #     self.entry_input.config(fg="black")
 
     def next_word_set(self):
         """docs"""
@@ -88,7 +87,7 @@ class TypingSpeedApp:
         else:
             var["p_index"] -= 1
             var["count"] -= 1
-        self.correct_negative_index()
+            self.correct_negative_index()
 
     # t is a
     def change_letter_color(self, p_index, color, reset=False, jump=False):
@@ -141,52 +140,76 @@ class TypingSpeedApp:
 
     def back_space_actions(self):
         """doc"""
-        if var["count"] > 0:
+        # BackSpace, where text is active in entry box
+        # if self.entry_input.get():
+        if var["count"] > 0 and self.char != "space":
             self.paragraph_and_word_index(ascent=False)
             if len(var["word"]) > 1:
                 var["word"] = var["word"][:-1]
             else:
                 var["word"] = ""
             self.change_letter_color(p_index=var["p_index"], color="black")
+        # BackSpace, text does not exist in entry box
         else:
             # if word count = 0 jump previous word in the LIST
             var["index"] -= 1
-            var["p_index"] -= 1
-            self.correct_negative_index()
-            # jumping previous word in the list means cursor
-            # ont the previous word last letter
-            var["count"] = len(LST[var["index"]]) - 1
-
-            # deleted paragraph letter color is set black
-            if self.paragraph[var["p_index"]]:
-                self.change_letter_color(
-                    p_index=var["p_index"], color="black", reset=True
-                )
+            var["index"] = max(var["index"],0)
+            if LST[var["index"]]:
+                var["count"] = len(LST[var["index"]]) - 1
+            var["p_index"] -= 2
+            var["p_index"] = max(var["p_index"], 0)
+            if self.paragraph[var["p_index"]] != " ":
+                self.change_letter_color(p_index=var["p_index"], color="black")
 
     def space_actions(self, char):
         """docs"""
+        # Ignore, none entered char + space
         if char == "space" and var["count"] > 0:
+            result = False
+            # the entered word is the same as the word in the list + space
             if var["word"] == LST[var["index"]]:
                 self.change_letter_color(
                     p_index=var["p_index"], color="green", reset=True
                 )
+                result = True
                 var["p_index"] += 1
-            else:
-                # Jumping next word beggining
+            # the entered word length less than the word in the list + space
+            elif len(var["word"]) < len(LST[var["index"]]):
+                # new_index = current_index - (length of word - entered word count) + 1
                 var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
 
                 self.change_letter_color(
-                    p_index=var["p_index"], color="red", reset=True
+                    p_index=var["p_index"], color="red", reset=True, jump=True
                 )
+            # the entered word length more than the word in the list + space
+            elif len(var["word"]) > len(LST[var["index"]]):
+                # new_index = current_index - entered_total_word # returns beginning of the word
+                # new_index += length of word # goes to next space of the end of the word
+                var["p_index"] = (var["p_index"] - len(var["word"])) +  len(LST[var["index"]])
+                self.change_letter_color(
+                    p_index=var["p_index"], color="red", reset=True, jump=False
+                )
+            else:
+                # word not equal, go to next char of paragraph
+                var["p_index"] += 1
+            container.append({var["word"] : {"result": result}})
+            self.entry_input.delete(0, tk.END)
             self.next_word_set()
 
-    # t is a
+    def print_report(self,):
+        """doc"""
+        print("Current Word: ",LST[var["index"]])
+        print(f"Current Char: {self.paragraph[var['index']]}")
+
+
     def update_input(self, event):
         """docs"""
         # Ignore to keep holding non-alphabetic keys entry
         # and deteck capitilaze of letter request
         # Pressing Shift, trigger the event 2 times
         self.char = event.keysym
+        if self.char == "Return":
+            self.print_report()
         if self.char in ("Shift_L", "Shift_R") and len(stack) == 0:
             stack.append(str.upper)
         # Delete letter while there are letter left
@@ -202,6 +225,7 @@ class TypingSpeedApp:
                 method = stack.pop()
                 self.char = method(self.char)
             self.track_word_character(count=var["count"], letter=self.char)
+
 
 
 # t is a
