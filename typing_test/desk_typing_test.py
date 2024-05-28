@@ -89,6 +89,7 @@ class TypingSpeedApp:
             var["count"] -= 1
         self.correct_negative_index()
 
+    # t is a
     def change_letter_color(self, p_index, color, reset=False):
         """docs"""
         # Normal Cases
@@ -97,8 +98,8 @@ class TypingSpeedApp:
         end = p_index + 1
         # Space Conditions
         if reset and var["count"] != len(LST[list_index]):
-            start = p_index - var["count"]
-            end = len(LST[list_index])
+            start = p_index - (len(LST[list_index]) + 1)
+            end = p_index - 1
             tag_name = f"{self.paragraph[:p_index+1]}"
         elif reset:
             start = p_index - (len(LST[list_index]))
@@ -173,11 +174,14 @@ class TypingSpeedApp:
                 )
                 var["p_index"] += 1
             else:
+                # Jumping next word beggining
+                var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
+
                 self.change_letter_color(
                     p_index=var["p_index"], color="red", reset=True
                 )
-                var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
             self.next_word_set()
+            return
 
         if char not in all_keysyms:
             if stack:
