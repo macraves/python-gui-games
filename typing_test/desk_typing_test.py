@@ -11,33 +11,30 @@ PARAGRAPH = (
     "t is a sample paragraph for the typing speed application "
     "This is a sample paragraph for the typing speed application "
 )
-LST = PARAGRAPH.split()
+
 FONT_TEXT = ("Arial", 14)
 
 var = {"word": "", "index": 0, "count": 0, "p_index": 0}
-container = []
 stack = []
+container = []
 
 
 class TypingSpeedApp:
     """docs"""
 
     def __init__(self, root: tk.Tk, paragraph: str) -> None:
+        self.list = PARAGRAPH.split()
         self.root = root
         self.root.title("Typing Speed Application")
         self.root.geometry("600x300")
         self.root.config(bg=BG_COLOR, padx=10, pady=10)
 
-        self.paragraph = " ".join(LST)
+        self.paragraph = " ".join(self.list)
         self.start_time = None
         self.end_time = None
         self.char = None
 
-        # # Paragraph Label
-        # self.label_paragraph = tk.Label(
-        #     root, text=self.paragraph, font=FONT_TEXT, wraplength=400, bg="white"
-        # )
-        # self.label_paragraph.grid(row=0, column=0, sticky="n", pady=20)
+
 
         # Text Widget
         self.text_paragraph = tk.Text(
@@ -49,7 +46,6 @@ class TypingSpeedApp:
             width=50,
         )
         self.text_paragraph.insert(tk.END, paragraph)
-        # self.text_paragraph.config(state="disabled")
         self.text_paragraph.grid(row=0, column=0, sticky="n", pady=20)
 
         # User Input Entry
@@ -62,16 +58,16 @@ class TypingSpeedApp:
             font=FONT_TEXT,
         )
         self.entry_input.grid(row=1, column=0, sticky="n", pady=10)
-        # self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
-        # self.entry_input.bind("<FocusIn>", self.on_entry_click)
+        self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
+        self.entry_input.bind("<FocusIn>", self.on_entry_click)
 
         # Binding Keyboard Entry
         self.entry_input.bind("<KeyRelease>", self.update_input)
 
-    # def on_entry_click(self, event):
-    #     """docs"""
-    #     self.entry_input.delete(0, tk.END)
-    #     self.entry_input.config(fg="black")
+    def on_entry_click(self, _):
+        """docs"""
+        self.entry_input.delete(0, tk.END)
+        self.entry_input.config(fg="black")
 
     def next_word_set(self):
         """docs"""
@@ -89,19 +85,17 @@ class TypingSpeedApp:
             var["count"] -= 1
             self.correct_negative_index()
 
-    # t is a
+
+
     def change_letter_color(self, p_index, color, reset=False):
         """docs"""
 
-        word = LST[var["index"]]
+        word = self.list[var["index"]]
         current_text = self.text_paragraph.get("1.0", tk.END)
-        tag_name = f"{LST[var["index"]]}[{var['index']}:{var['count']}]"
+        tag_name = f"{self.list[var["index"]]}[{var['index']}:{var['count']}]"
         if reset:
-            start = p_index - len(word)
+            start = p_index - (len(word))
             end = start + len(word)
-        # elif reset and jump:
-        #     start = p_index
-        #     end = p_index + len(word)
         else:
             start = p_index
             end = p_index + 1
@@ -112,6 +106,7 @@ class TypingSpeedApp:
 
         # Delete current text content
         self.text_paragraph.delete(f"1.{start}", tk.END)
+        # Add slice of text in order
         self.text_paragraph.insert(tk.END, first_part)
         self.text_paragraph.insert(tk.END, second_part)
 
@@ -122,7 +117,7 @@ class TypingSpeedApp:
         """docs"""
         index = var["index"]
         paragraph_index = var["p_index"]
-        word = LST[index]
+        word = self.list[index]
         if count >= len(word) or paragraph_index >= len(self.paragraph):
             return
         if word[count] == letter:
@@ -154,8 +149,8 @@ class TypingSpeedApp:
             # if word count = 0 jump previous word in the LIST
             var["index"] -= 1
             var["index"] = max(var["index"],0)
-            if LST[var["index"]]:
-                var["count"] = len(LST[var["index"]]) - 1
+            if self.list[var["index"]]:
+                var["count"] = len(self.list[var["index"]]) - 1
             var["p_index"] -= 2
             var["p_index"] = max(var["p_index"], 0)
             if self.paragraph[var["p_index"]] != " ":
@@ -165,39 +160,40 @@ class TypingSpeedApp:
         """docs"""
         # Ignore, none entered char + space
         if char == "space" and var["count"] > 0:
-            result = False
             # the entered word is the same as the word in the list + space
-            if var["word"] == LST[var["index"]]:
+            if var["word"] == self.list[var["index"]]:
                 self.change_letter_color(
                     p_index=var["p_index"], color="green", reset=True
                 )
-                result = True
                 var["p_index"] += 1
+                container.append(True)
             # the entered word length less than the word in the list + space
-            elif len(var["word"]) < len(LST[var["index"]]):
+            elif len(var["word"]) < len(self.list[var["index"]]):
                 # new_index = current_index - (length of word - entered word count) + 1
-                var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
+                var["p_index"] += ((len(self.list[var["index"]])) - var["count"]) + 1
 
                 self.change_letter_color(
                     p_index=var["p_index"], color="red", reset=True)
+                container.append(False)
             # the entered word length more than the word in the list + space
-            elif len(var["word"]) > len(LST[var["index"]]):
+            elif len(var["word"]) > len(self.list[var["index"]]):
                 # new_index = current_index - entered_total_word # returns beginning of the word
                 # new_index += length of word # goes to next space of the end of the word
-                var["p_index"] = (var["p_index"] - len(var["word"])) +  len(LST[var["index"]])
+                var["p_index"] = (var["p_index"] - len(var["word"])) +  len(self.list[var["index"]])
 
                 self.change_letter_color(
                     p_index=var["p_index"], color="red", reset=True)
+                container.append(False)
             else:
                 # word not equal, go to next char of paragraph
                 var["p_index"] += 1
-            container.append({var["word"] : {"result": result}})
+                container.append(False)
             self.entry_input.delete(0, tk.END)
             self.next_word_set()
 
     def print_report(self,):
         """doc"""
-        print("Current Word: ",LST[var["index"]])
+        print("Current Word: ",self.list[var["index"]])
         print(f"Current Char: {self.paragraph[var['index']]}")
 
 
@@ -227,7 +223,7 @@ class TypingSpeedApp:
 
 
 
-# t is a
+
 
 window = tk.Tk()
 window.grid_rowconfigure(0, weight=1)
