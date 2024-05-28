@@ -8,7 +8,7 @@ letters = list(string.ascii_lowercase + string.ascii_uppercase + " ")
 BG_COLOR = "#ea6e28"
 ENTRY_DEFAULT_TEXT = "Enter the text here"
 PARAGRAPH = (
-    "t is a sample paragraph for the typing speed application "
+    "th is a sample paragraph for the typing speed application "
     "This is a sample paragraph for the typing speed application "
 )
 LST = PARAGRAPH.split()
@@ -48,7 +48,7 @@ class TypingSpeedApp:
             width=50,
         )
         self.text_paragraph.insert(tk.END, paragraph)
-        self.text_paragraph.config(state="disabled")
+        # self.text_paragraph.config(state="disabled")
         self.text_paragraph.grid(row=0, column=0, sticky="n", pady=20)
 
         # User Input Entry
@@ -92,6 +92,26 @@ class TypingSpeedApp:
     # t is a
     def change_letter_color(self, p_index, color, reset=False):
         """docs"""
+        start = p_index
+        end = p_index + 1
+        word = LST[var["index"]]
+        # tag_name = f"{word}[{start}:{end}]]: {word[start:end]}"
+        # Save current text in TEXT
+        current_text = self.text_paragraph.get("1.0", tk.END)
+        first_part = current_text[start:end]
+        second_part = current_text[end:]
+
+        tag_name = f"{word}[{start}]:{end}] {color}"
+        # Delete current text content
+        self.text_paragraph.delete("1.0", tk.END)
+        self.text_paragraph.insert(tk.END, first_part)
+        self.text_paragraph.insert(tk.END, second_part)
+
+        self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
+        self.text_paragraph.tag_config(tag_name, foreground=color)
+
+    def change_letter_color2(self, p_index, color, reset=False):
+        """docs"""
         # Normal Cases
         list_index = var["index"]
         start = p_index
@@ -132,43 +152,32 @@ class TypingSpeedApp:
         var["index"] = max(var["index"], 0)
         var["p_index"] = max(var["p_index"], 0)
 
-    # t is a
-    def update_input(self, event):
-        """docs"""
-        # Ignore to keep holding non-alphabetic keys entry
-        # and deteck capitilaze of letter request
-        # Pressing Shift, trigger the event 2 times
-        char = event.keysym
-        if char in ("Shift_L", "Shift_R") and len(stack) == 0:
-            stack.append(str.upper)
-        # Delete letter while there are letter left
-        if char == "BackSpace":
-            if var["count"] > 0:
-                self.paragraph_and_word_index(increase=False)
-                if len(var["word"]) > 1:
-                    var["word"] = var["word"][:-1]
-                else:
-                    var["word"] = ""
-                self.change_letter_color(p_index=var["p_index"], color="black")
+    def back_space_actions(self):
+        """doc"""
+        if var["count"] > 0:
+            self.paragraph_and_word_index(increase=False)
+            if len(var["word"]) > 1:
+                var["word"] = var["word"][:-1]
             else:
-                # if word count = 0 jump previous word in the LIST
-                var["index"] -= 1
-                var["p_index"] -= 1
-                self.correct_negative_index()
-                # jumping previous word in the list means cursor
-                # ont the previous word last letter
-                var["count"] = len(LST[var["index"]]) - 1
+                var["word"] = ""
+            self.change_letter_color(p_index=var["p_index"], color="black")
+        else:
+            # if word count = 0 jump previous word in the LIST
+            var["index"] -= 1
+            var["p_index"] -= 1
+            self.correct_negative_index()
+            # jumping previous word in the list means cursor
+            # ont the previous word last letter
+            var["count"] = len(LST[var["index"]]) - 1
 
-                # deleted paragraph letter color is set black
-                if self.paragraph[var["p_index"]]:
-                    self.change_letter_color(
-                        p_index=var["p_index"], color="black", reset=True
-                    )
+            # deleted paragraph letter color is set black
+            if self.paragraph[var["p_index"]]:
+                self.change_letter_color(
+                    p_index=var["p_index"], color="black", reset=True
+                )
 
-        # Never let the any index (count) less than 0
-        self.correct_negative_index()
-
-        # if There is entry for word then pass next word
+    def space_actions(self, char):
+        """docs"""
         if char == "space" and var["count"] > 0:
             if var["word"] == LST[var["index"]]:
                 self.change_letter_color(
@@ -183,8 +192,25 @@ class TypingSpeedApp:
                     p_index=var["p_index"], color="red", reset=True
                 )
             self.next_word_set()
-            return
+        return char
 
+    # t is a
+    def update_input(self, event):
+        """docs"""
+        # Ignore to keep holding non-alphabetic keys entry
+        # and deteck capitilaze of letter request
+        # Pressing Shift, trigger the event 2 times
+        char = event.keysym
+        if char in ("Shift_L", "Shift_R") and len(stack) == 0:
+            stack.append(str.upper)
+        # Delete letter while there are letter left
+        if char == "BackSpace":
+            self.back_space_actions()
+        # Never let the any index (count) less than 0
+        self.correct_negative_index()
+
+        # if There is entry for word then pass next word
+        char = self.space_actions(char=char)
         if char not in all_keysyms:
             if stack:
                 method = stack.pop()
