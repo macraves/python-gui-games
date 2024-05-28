@@ -14,7 +14,7 @@ PARAGRAPH = (
 LST = PARAGRAPH.split()
 FONT_TEXT = ("Arial", 14)
 
-var = {"count": 0, "index": 0, "word": "", "next": False}
+var = {"word": "", "count": 0, "index": 0, "p_index": 0}
 container = []
 stack = []
 
@@ -73,58 +73,67 @@ class TypingSpeedApp:
     #         self.entry_input.delete(0, tk.END)
     #         self.entry_input.config(fg="black")
 
-    def get_paragraph_index(self, index, count):
-        """doc"""
-        length = 0
-        if index != 0:
-            for i in range(index):
-                length += len(LST[i]) + 1
-        else:
-            length = count
-        return length, self.paragraph[length]
-
-    def change_leter_color(self, index, count, color):
-        """docs"""
-        length, _ = self.get_paragraph_index(index, count)
-
-        tag_name = f"{index}.{LST[index]}.{LST[index]}{count}"
-        self.text_paragraph.tag_add(
-            tag_name, f"1.{length+count}", f"1.{length+count+1}"
-        )
-        self.text_paragraph.tag_config(tag_name, foreground=color)
-
     def next_word_set(self):
         """docs"""
         var["word"] = ""
         var["index"] += 1
         var["count"] = 0
 
-    def print_details(self, index, count):
+    def paragraph_and_word_index(self, increase: bool):
         """docs"""
-        print(
-            f"{self.get_paragraph_index(index, count)[0]}. index "
-            f"{self.get_paragraph_index(index, count)[1]}"
-        )
+        if increase:
+            var["p_index"] += 1
+            var["count"] += 1
+        else:
+            var["p_index"] -= 1
+            var["count"] -= 1
+        self.correct_negative_index()
+
+    def change_letter_color(self, p_index, color, reset=False):
+        """docs"""
+        # Normal Cases
+        list_index = var["index"]
+        start = p_index
+        end = p_index + 1
+        # Space Conditions
+        if reset and var["count"] != len(LST[list_index]):
+            start = p_index - var["count"]
+            end = len(LST[list_index])
+            tag_name = f"{self.paragraph[:p_index+1]}"
+        elif reset:
+            start = p_index - (len(LST[list_index]))
+            end = p_index
+            tag_name = f"{self.paragraph[:p_index+1]}"
+        else:
+            tag_name = (
+                f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
+            )
+
+        self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
+        self.text_paragraph.tag_config(tag_name, foreground=color)
 
     def track_word_character(self, count, letter):
         """docs"""
         index = var["index"]
-        self.print_details(index, count)
+        paragraph_index = var["p_index"]
         word = LST[index]
-        if count < len(word):
-            if letter == word[count]:
-                self.change_leter_color(index=index, count=count, color="green")
-            else:
-                print(letter + " wrong entry")
-                self.change_leter_color(index=index, count=count, color="red")
-            var["word"] += letter
-            var["count"] += 1
-        if var["word"] == word:
-            container.append(var["word"])
-            self.next_word_set()
-            var["next"] = True
-        if len(var["word"]) == len(word):
-            self.next_word_set()
+        if count >= len(word) or paragraph_index >= len(self.paragraph):
+            return
+        if word[count] == letter:
+            self.change_letter_color(p_index=paragraph_index, color="green")
+        else:
+            self.change_letter_color(p_index=paragraph_index, color="red")
+        var["word"] += letter
+        self.paragraph_and_word_index(increase=True)
+
+    def word_space_compliance(self):
+        """docs"""
+
+    def correct_negative_index(self):
+        """docs"""
+        var["count"] = max(var["count"], 0)
+        var["index"] = max(var["index"], 0)
+        var["p_index"] = max(var["p_index"], 0)
 
     def update_input(self, event):
         """docs"""
@@ -137,25 +146,37 @@ class TypingSpeedApp:
         # Delete letter while there are letter left
         if char == "BackSpace":
             if var["count"] > 0:
-                var["count"] -= 1
-                var["word"] = var["word"][:-1]
-
-                self.change_leter_color(
-                    index=var["index"], count=var["count"], color="black"
-                )
-
+                self.paragraph_and_word_index(increase=False)
+                if len(var["word"]) > 1:
+                    var["word"] = var["word"][:-1]
+                else:
+                    var["word"] = ""
+                self.change_letter_color(p_index=var["p_index"], color="black")
             else:
+                # if word count = 0 jump previous word in the LIST
                 var["index"] -= 1
-                var["index"] = max(var["index"], 0)
+                # jumping previous word in the list means cursor
+                # ont the previous word last letter
                 var["count"] = len(LST[var["index"]])
-                self.change_leter_color(
-                    index=var["index"], count=var["count"], color="black"
-                )
-        # Never let the word index (count) less than 0
-        var["count"] = max(var["count"], 0)
+                self.paragraph_and_word_index(increase=False)
+                # deleted paragraph letter color is set black
+                self.change_letter_color(p_index=var["p_index"], color="black")
 
-        # in a case any letter entered, enable space
+        # Never let the any index (count) less than 0
+        self.correct_negative_index()
+
+        # if There is entry for word then pass next word
         if char == "space" and var["count"] > 0:
+            if var["word"] == LST[var["index"]]:
+                self.change_letter_color(
+                    p_index=var["p_index"], color="gold2", reset=True
+                )
+                var["p_index"] += 1
+            else:
+                self.change_letter_color(
+                    p_index=var["p_index"], color="red", reset=True
+                )
+                var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
             self.next_word_set()
 
         if char not in all_keysyms:
@@ -164,6 +185,8 @@ class TypingSpeedApp:
                 char = method(char)
             self.track_word_character(count=var["count"], letter=char)
 
+
+# t is a
 
 window = tk.Tk()
 window.grid_rowconfigure(0, weight=1)
