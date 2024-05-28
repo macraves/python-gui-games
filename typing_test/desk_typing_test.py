@@ -48,7 +48,7 @@ class TypingSpeedApp:
             width=50,
         )
         self.text_paragraph.insert(tk.END, paragraph)
-        self.text_paragraph.config(state="disabled")
+        # self.text_paragraph.config(state="disabled")
         self.text_paragraph.grid(row=0, column=0, sticky="n", pady=20)
 
         # User Input Entry
