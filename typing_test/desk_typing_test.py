@@ -90,18 +90,18 @@ class TypingSpeedApp:
             self.correct_negative_index()
 
     # t is a
-    def change_letter_color(self, p_index, color, reset=False, jump=False):
+    def change_letter_color(self, p_index, color, reset=False):
         """docs"""
 
         word = LST[var["index"]]
         current_text = self.text_paragraph.get("1.0", tk.END)
         tag_name = f"{LST[var["index"]]}[{var['index']}:{var['count']}]"
-        if reset and not jump:
+        if reset:
             start = p_index - len(word)
             end = start + len(word)
-        elif reset and jump:
-            start = p_index - (1 + len(word))
-            end = start + len(word)
+        # elif reset and jump:
+        #     start = p_index
+        #     end = p_index + len(word)
         else:
             start = p_index
             end = p_index + 1
@@ -179,16 +179,15 @@ class TypingSpeedApp:
                 var["p_index"] += ((len(LST[var["index"]])) - var["count"]) + 1
 
                 self.change_letter_color(
-                    p_index=var["p_index"], color="red", reset=True, jump=True
-                )
+                    p_index=var["p_index"], color="red", reset=True)
             # the entered word length more than the word in the list + space
             elif len(var["word"]) > len(LST[var["index"]]):
                 # new_index = current_index - entered_total_word # returns beginning of the word
                 # new_index += length of word # goes to next space of the end of the word
                 var["p_index"] = (var["p_index"] - len(var["word"])) +  len(LST[var["index"]])
+
                 self.change_letter_color(
-                    p_index=var["p_index"], color="red", reset=True, jump=False
-                )
+                    p_index=var["p_index"], color="red", reset=True)
             else:
                 # word not equal, go to next char of paragraph
                 var["p_index"] += 1
