@@ -14,7 +14,7 @@ PARAGRAPH = (
 LST = PARAGRAPH.split()
 FONT_TEXT = ("Arial", 14)
 
-var = {"word": "", "count": 0, "index": 0, "p_index": 0}
+var = {"word": "", "index": 0, "count": 0, "p_index": 0}
 container = []
 stack = []
 
@@ -100,15 +100,14 @@ class TypingSpeedApp:
         if reset and var["count"] != len(LST[list_index]):
             start = p_index - (len(LST[list_index]) + 1)
             end = p_index - 1
-            tag_name = f"{self.paragraph[:p_index+1]}"
-        elif reset:
+        elif reset and color == "black":
+            start = p_index
+            end = p_index + 1
+        elif reset and color == "gold2":
             start = p_index - (len(LST[list_index]))
             end = p_index
-            tag_name = f"{self.paragraph[:p_index+1]}"
-        else:
-            tag_name = (
-                f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
-            )
+
+        tag_name = f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
 
         self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
         self.text_paragraph.tag_config(tag_name, foreground=color)
@@ -127,15 +126,13 @@ class TypingSpeedApp:
         var["word"] += letter
         self.paragraph_and_word_index(increase=True)
 
-    def word_space_compliance(self):
-        """docs"""
-
     def correct_negative_index(self):
         """docs"""
         var["count"] = max(var["count"], 0)
         var["index"] = max(var["index"], 0)
         var["p_index"] = max(var["p_index"], 0)
 
+    # t is a
     def update_input(self, event):
         """docs"""
         # Ignore to keep holding non-alphabetic keys entry
@@ -156,12 +153,17 @@ class TypingSpeedApp:
             else:
                 # if word count = 0 jump previous word in the LIST
                 var["index"] -= 1
+                var["p_index"] -= 1
+                self.correct_negative_index()
                 # jumping previous word in the list means cursor
                 # ont the previous word last letter
-                var["count"] = len(LST[var["index"]])
-                self.paragraph_and_word_index(increase=False)
+                var["count"] = len(LST[var["index"]]) - 1
+
                 # deleted paragraph letter color is set black
-                self.change_letter_color(p_index=var["p_index"], color="black")
+                if self.paragraph[var["p_index"]]:
+                    self.change_letter_color(
+                        p_index=var["p_index"], color="black", reset=True
+                    )
 
         # Never let the any index (count) less than 0
         self.correct_negative_index()
