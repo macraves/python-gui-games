@@ -8,7 +8,7 @@ letters = list(string.ascii_lowercase + string.ascii_uppercase + " ")
 BG_COLOR = "#ea6e28"
 ENTRY_DEFAULT_TEXT = "Enter the text here"
 PARAGRAPH = (
-    "th is a sample paragraph for the typing speed application "
+    "t is a sample paragraph for the typing speed application "
     "This is a sample paragraph for the typing speed application "
 )
 LST = PARAGRAPH.split()
@@ -31,6 +31,7 @@ class TypingSpeedApp:
         self.paragraph = " ".join(LST)
         self.start_time = None
         self.end_time = None
+        self.char = None
 
         # # Paragraph Label
         # self.label_paragraph = tk.Label(
@@ -79,9 +80,9 @@ class TypingSpeedApp:
         var["index"] += 1
         var["count"] = 0
 
-    def paragraph_and_word_index(self, increase: bool):
+    def paragraph_and_word_index(self, ascent: bool):
         """docs"""
-        if increase:
+        if ascent:
             var["p_index"] += 1
             var["count"] += 1
         else:
@@ -90,47 +91,33 @@ class TypingSpeedApp:
         self.correct_negative_index()
 
     # t is a
-    def change_letter_color(self, p_index, color, reset=False):
+    def change_letter_color(self, p_index, color, reset=False, jump=False):
         """docs"""
-        start = p_index
-        end = p_index + 1
+
         word = LST[var["index"]]
-        # tag_name = f"{word}[{start}:{end}]]: {word[start:end]}"
-        # Save current text in TEXT
         current_text = self.text_paragraph.get("1.0", tk.END)
+        tag_name = f"{LST[var["index"]]}[{var['index']}:{var['count']}]"
+        if reset and not jump:
+            start = p_index - len(word)
+            end = start + len(word)
+        elif reset and jump:
+            start = p_index - (1 + len(word))
+            end = start + len(word)
+        else:
+            start = p_index
+            end = p_index + 1
+
+        # Save current text in TEXT
         first_part = current_text[start:end]
         second_part = current_text[end:]
 
-        tag_name = f"{word}[{start}]:{end}]"
         # Delete current text content
         self.text_paragraph.delete(f"1.{start}", tk.END)
         self.text_paragraph.insert(tk.END, first_part)
         self.text_paragraph.insert(tk.END, second_part)
 
         self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
-        self.text_paragraph.tag_config(tag_name, foreground=color)
-
-    def change_letter_color2(self, p_index, color, reset=False):
-        """docs"""
-        # Normal Cases
-        list_index = var["index"]
-        start = p_index
-        end = p_index + 1
-        # Space Conditions
-        if reset and var["count"] != len(LST[list_index]):
-            start = p_index - (len(LST[list_index]) + 1)
-            end = p_index - 1
-        elif reset and color == "black":
-            start = p_index
-            end = p_index + 1
-        elif reset and color == "gold2":
-            start = p_index - (len(LST[list_index]))
-            end = p_index
-
-        tag_name = f"{list_index}.{LST[list_index]}.{p_index}.{self.paragraph[p_index]}"
-
-        self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
-        self.text_paragraph.tag_config(tag_name, foreground=color)
+        self.text_paragraph.tag_config(tag_name, foreground=color, background="gold2")
 
     def track_word_character(self, count, letter):
         """docs"""
@@ -144,7 +131,7 @@ class TypingSpeedApp:
         else:
             self.change_letter_color(p_index=paragraph_index, color="red")
         var["word"] += letter
-        self.paragraph_and_word_index(increase=True)
+        self.paragraph_and_word_index(ascent=True)
 
     def correct_negative_index(self):
         """docs"""
@@ -155,7 +142,7 @@ class TypingSpeedApp:
     def back_space_actions(self):
         """doc"""
         if var["count"] > 0:
-            self.paragraph_and_word_index(increase=False)
+            self.paragraph_and_word_index(ascent=False)
             if len(var["word"]) > 1:
                 var["word"] = var["word"][:-1]
             else:
@@ -181,7 +168,7 @@ class TypingSpeedApp:
         if char == "space" and var["count"] > 0:
             if var["word"] == LST[var["index"]]:
                 self.change_letter_color(
-                    p_index=var["p_index"], color="gold2", reset=True
+                    p_index=var["p_index"], color="green", reset=True
                 )
                 var["p_index"] += 1
             else:
@@ -192,7 +179,6 @@ class TypingSpeedApp:
                     p_index=var["p_index"], color="red", reset=True
                 )
             self.next_word_set()
-        return char
 
     # t is a
     def update_input(self, event):
@@ -200,22 +186,22 @@ class TypingSpeedApp:
         # Ignore to keep holding non-alphabetic keys entry
         # and deteck capitilaze of letter request
         # Pressing Shift, trigger the event 2 times
-        char = event.keysym
-        if char in ("Shift_L", "Shift_R") and len(stack) == 0:
+        self.char = event.keysym
+        if self.char in ("Shift_L", "Shift_R") and len(stack) == 0:
             stack.append(str.upper)
         # Delete letter while there are letter left
-        if char == "BackSpace":
+        if self.char == "BackSpace":
             self.back_space_actions()
         # Never let the any index (count) less than 0
         self.correct_negative_index()
 
         # if There is entry for word then pass next word
-        char = self.space_actions(char=char)
-        if char not in all_keysyms:
+        self.space_actions(char=self.char)
+        if self.char not in all_keysyms:
             if stack:
                 method = stack.pop()
-                char = method(char)
-            self.track_word_character(count=var["count"], letter=char)
+                self.char = method(self.char)
+            self.track_word_character(count=var["count"], letter=self.char)
 
 
 # t is a
