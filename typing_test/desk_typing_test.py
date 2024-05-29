@@ -188,7 +188,7 @@ class TypingSpeedApp:
         """doc"""
         # BackSpace, where text is active in entry box
         # if self.entry_input.get():
-        if var["count"] > 0 and self.char != "space":
+        if var["count"] > 0:
             self.paragraph_and_word_index(ascent=False)
             if len(var["word"]) > 1:
                 var["word"] = var["word"][:-1]
@@ -273,7 +273,7 @@ class TypingSpeedApp:
                 method = stack.pop()
                 self.char = method(self.char)
             self.track_word_character(count=var["count"], letter=self.char)
-        print(container)
+        
 
 
 
