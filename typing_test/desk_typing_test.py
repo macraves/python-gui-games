@@ -19,9 +19,21 @@ container = []
 
 
 class TypingSpeedApp:
-    """docs"""
+    """A class representing a Typing Speed Application.
+
+    Attributes:
+        root (tk.Tk): The root window of the application.
+        paragraph (str): The paragraph for the typing test.
+        update_input(self, event): Reads keyboard entries
+    """
 
     def __init__(self, root: tk.Tk, paragraph: str) -> None:
+        """Initializes the TypingSpeedApp object.
+
+        Args:
+            root (tk.Tk): The root window of the application.
+            paragraph (str): The paragraph for the typing test.
+        """
         self.list = PARAGRAPH.split()
         self.root = root
         self.root.title("Typing Speed Application")
@@ -29,8 +41,6 @@ class TypingSpeedApp:
         self.root.config(bg=BG_COLOR, padx=10, pady=5)
 
         self.paragraph = " ".join(self.list)
-        self.start_time = None
-        self.end_time = None
         self.char = None
 
 
@@ -73,7 +83,7 @@ class TypingSpeedApp:
 
 
     def run_timer(self):
-        """docs"""
+        """Starts the timer for the typing test"""
         self.label_timer.grid(row=1, column=0)
         self.label_time.grid(row=2, column=0)
         self.label_time.config(text=f"{var['timer']}")
@@ -86,7 +96,7 @@ class TypingSpeedApp:
             self.label_time.after(1000, self.run_timer)
 
     def show_result(self):
-        """docs"""
+        """Displays the result of the typing test."""
         self.label_timer.destroy()
         self.label_time.destroy()
         gross, net = self.calculate_wpm()
@@ -98,7 +108,7 @@ class TypingSpeedApp:
         self.button_try_again.grid(row=2, column=0)
 
     def restart(self):
-        """docs"""
+        """Restarts the typing test."""
         self.root.destroy()
         new_window = tk.Tk()
         new_app = TypingSpeedApp(new_window, PARAGRAPH)
@@ -107,7 +117,7 @@ class TypingSpeedApp:
 
 
     def calculate_wpm(self):
-        """docs"""
+        """Calculates the gross and net words per minute (WPM)."""
         true_counts = container.count(True)
         false_counts = container.count(False)
         gross_wpm = ((true_counts + false_counts)/5) / (TIMER // 60)
@@ -115,19 +125,19 @@ class TypingSpeedApp:
         return gross_wpm, net_wpm
 
     def on_entry_click(self, _):
-        """docs"""
+        """Handles the event when the entry box is clicked."""
         self.entry_input.delete(0, tk.END)
         self.entry_input.config(fg="black")
         self.run_timer()
 
     def next_word_set(self):
-        """docs"""
+        """Moves to the next word in the paragraph."""
         var["word"] = ""
         var["index"] += 1
         var["count"] = 0
 
     def paragraph_and_word_index(self, ascent: bool):
-        """docs"""
+        """Updates the paragraph and word index."""
         if ascent:
             var["p_index"] += 1
             var["count"] += 1
@@ -136,11 +146,16 @@ class TypingSpeedApp:
             var["count"] -= 1
             self.correct_negative_index()
 
+    def correct_negative_index(self):
+        """Corrects negative index values."""
+        var["count"] = max(var["count"], 0)
+        var["index"] = max(var["index"], 0)
+        var["p_index"] = max(var["p_index"], 0)
+
 
 
     def change_letter_color(self, p_index, color, reset=False):
-        """docs"""
-
+        """Changes the color of a letter in the paragraph."""
         word = self.list[var["index"]]
         current_text = self.text_paragraph.get("1.0", tk.END)
         tag_name = f"{self.list[var["index"]]}[{var['index']}:{var['p_index']}]"
@@ -160,12 +175,12 @@ class TypingSpeedApp:
         # Add slice of text in order
         self.text_paragraph.insert(tk.END, first_part)
         self.text_paragraph.insert(tk.END, second_part)
-
+        # Applies tag_name indices configuration
         self.text_paragraph.tag_add(tag_name, f"1.{start}", f"1.{end}")
         self.text_paragraph.tag_config(tag_name, foreground=color, background="gold2")
 
     def track_word_character(self, count, letter):
-        """docs"""
+        """Tracks the correctness of the entered letter."""
         index = var["index"]
         paragraph_index = var["p_index"]
         word = self.list[index]
@@ -178,14 +193,10 @@ class TypingSpeedApp:
         var["word"] += letter
         self.paragraph_and_word_index(ascent=True)
 
-    def correct_negative_index(self):
-        """docs"""
-        var["count"] = max(var["count"], 0)
-        var["index"] = max(var["index"], 0)
-        var["p_index"] = max(var["p_index"], 0)
+
 
     def back_space_actions(self):
-        """doc"""
+        """Handles the backspace actions."""
         # BackSpace, where text is active in entry box
         # if self.entry_input.get():
         if var["count"] > 0:
@@ -208,8 +219,10 @@ class TypingSpeedApp:
                 self.change_letter_color(p_index=var["p_index"], color="black")
             if container:
                 container.pop()
+
+
     def space_actions(self, char):
-        """docs"""
+        """Handles the space actions."""
         # Ignore, none entered char + space
         if char == "space" and var["count"] > 0:
             # the entered word is the same as the word in the list + space
@@ -244,13 +257,13 @@ class TypingSpeedApp:
             self.next_word_set()
 
     def print_report(self,):
-        """doc"""
+        """Prints the current word and character."""
         print("Current Word: ",self.list[var["index"]])
         print(f"Current Char: {self.paragraph[var['index']]}")
 
 
     def update_input(self, event):
-        """docs"""
+        """Updates the input and tracks the entered letters."""
         # Ignore to keep holding non-alphabetic keys entry
         # and deteck capitilaze of letter request
         # Pressing Shift, trigger the event 2 times
