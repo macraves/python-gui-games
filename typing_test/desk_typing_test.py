@@ -56,8 +56,8 @@ class TypingSpeedApp:
             bd=8
         )
         self.entry_input.grid(row=3, column=0, sticky="n", pady=10 )
-        # self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
-        # self.entry_input.bind("<FocusIn>", self.on_entry_click)
+        self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
+        self.entry_input.bind("<FocusIn>", self.on_entry_click)
 
         # Binding Keyboard Entry
         self.entry_input.bind("<KeyRelease>", self.update_input)
@@ -79,7 +79,7 @@ class TypingSpeedApp:
         self.label_time.config(text=f"{var['timer']}")
         var["timer"] -= 1
         if var["timer"] <= 0:
-            var["timer"] = 3
+            var["timer"] = 60
             self.show_result()
             self.entry_input.config(state=tk.DISABLED)
         else:
