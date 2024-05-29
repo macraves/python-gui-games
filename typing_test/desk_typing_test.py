@@ -8,13 +8,12 @@ letters = list(string.ascii_lowercase + string.ascii_uppercase + " ")
 BG_COLOR = "#ea6e28"
 ENTRY_DEFAULT_TEXT = "Enter the text here"
 PARAGRAPH = (
-    "t is a sample paragraph for the typing speed application "
-    "This is a sample paragraph for the typing speed application "
+    "This is a sample paragraph for the typing speed application " * 30
 )
 
 FONT_TEXT = ("Arial", 14)
-
-var = {"word": "", "index": 0, "count": 0, "p_index": 0}
+TIMER = 60
+var = {"word": "", "index": 0, "count": 0, "p_index": 0, "timer":TIMER}
 stack = []
 container = []
 
@@ -26,14 +25,13 @@ class TypingSpeedApp:
         self.list = PARAGRAPH.split()
         self.root = root
         self.root.title("Typing Speed Application")
-        self.root.geometry("600x300")
-        self.root.config(bg=BG_COLOR, padx=10, pady=10)
+        self.root.geometry("600x400")
+        self.root.config(bg=BG_COLOR, padx=10, pady=5)
 
         self.paragraph = " ".join(self.list)
         self.start_time = None
         self.end_time = None
         self.char = None
-
 
 
         # Text Widget
@@ -46,8 +44,7 @@ class TypingSpeedApp:
             width=50,
         )
         self.text_paragraph.insert(tk.END, paragraph)
-        self.text_paragraph.grid(row=0, column=0, sticky="n", pady=20)
-
+        self.text_paragraph.grid(row=0, column=0, sticky="n", pady=10)
         # User Input Entry
         self.entry_input = tk.Entry(
             root,
@@ -56,18 +53,72 @@ class TypingSpeedApp:
             justify="center",
             width=30,
             font=FONT_TEXT,
+            bd=8
         )
-        self.entry_input.grid(row=1, column=0, sticky="n", pady=10)
+        self.entry_input.grid(row=3, column=0, sticky="n", pady=10 )
         self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
         self.entry_input.bind("<FocusIn>", self.on_entry_click)
 
         # Binding Keyboard Entry
         self.entry_input.bind("<KeyRelease>", self.update_input)
 
+        # LABEL TIMER
+        self.label_timer = tk.Label(self.root,text="Timer",
+                               font=("cooper black", 28,"bold italic"), bg=BG_COLOR, fg="red")
+        # LABEL TIME
+        self.label_time = tk.Label(self.root,text="60",
+                              font=("Castellar", 28,"bold italic"), bg=BG_COLOR)
+        # BUTTONS
+        self.button_try_again = tk.Button(self.root, text="Try Again", command=self.restart)
+
+
+    def run_timer(self):
+        """docs"""
+        self.label_timer.grid(row=1, column=0)
+        self.label_time.grid(row=2, column=0)
+        self.label_time.config(text=f"{var['timer']}")
+        var["timer"] -= 1
+        if var["timer"] <= 0:
+            var["timer"] = 3
+            self.show_result()
+            self.entry_input.config(state=tk.DISABLED)
+        else:
+            self.label_time.after(1000, self.run_timer)
+
+    def show_result(self):
+        """docs"""
+        self.label_timer.destroy()
+        self.label_time.destroy()
+        gross, net = self.calculate_wpm()
+        self.text_paragraph.grid(row=0,column=0, columnspan=2,sticky="ew")
+        label_gross = tk.Label(text=f"Gross WPM: {gross}", font=FONT_TEXT, bg=BG_COLOR)
+        label_gross.grid(row=1,column=0, sticky="w")
+        label_net = tk.Label(text=f"Net WPM: {net}", font=FONT_TEXT, bg=BG_COLOR)
+        label_net.grid(row=1, column=1, sticky="w")
+        self.button_try_again.grid(row=2, column=0)
+
+    def restart(self):
+        """docs"""
+        self.root.destroy()
+        new_window = tk.Tk()
+        new_app = TypingSpeedApp(new_window, PARAGRAPH)
+        new_app.root.mainloop()
+
+
+
+    def calculate_wpm(self):
+        """docs"""
+        true_counts = container.count(True)
+        false_counts = container.count(False)
+        gross_wpm = ((true_counts + false_counts)/5) / (TIMER // 60)
+        net_wpm = gross_wpm - ((false_counts)/5) / (TIMER // 60)
+        return gross_wpm, net_wpm
+
     def on_entry_click(self, _):
         """docs"""
         self.entry_input.delete(0, tk.END)
         self.entry_input.config(fg="black")
+        self.run_timer()
 
     def next_word_set(self):
         """docs"""
@@ -155,7 +206,8 @@ class TypingSpeedApp:
             var["p_index"] = max(var["p_index"], 0)
             if self.paragraph[var["p_index"]] != " ":
                 self.change_letter_color(p_index=var["p_index"], color="black")
-
+            if container:
+                container.pop()
     def space_actions(self, char):
         """docs"""
         # Ignore, none entered char + space
@@ -202,6 +254,7 @@ class TypingSpeedApp:
         # Ignore to keep holding non-alphabetic keys entry
         # and deteck capitilaze of letter request
         # Pressing Shift, trigger the event 2 times
+
         self.char = event.keysym
         if self.char == "Return":
             self.print_report()
@@ -220,6 +273,7 @@ class TypingSpeedApp:
                 method = stack.pop()
                 self.char = method(self.char)
             self.track_word_character(count=var["count"], letter=self.char)
+        print(container)
 
 
 
