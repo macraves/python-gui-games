@@ -56,8 +56,8 @@ class TypingSpeedApp:
             bd=8
         )
         self.entry_input.grid(row=3, column=0, sticky="n", pady=10 )
-        self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
-        self.entry_input.bind("<FocusIn>", self.on_entry_click)
+        # self.entry_input.insert(0, ENTRY_DEFAULT_TEXT)
+        # self.entry_input.bind("<FocusIn>", self.on_entry_click)
 
         # Binding Keyboard Entry
         self.entry_input.bind("<KeyRelease>", self.update_input)
@@ -143,7 +143,7 @@ class TypingSpeedApp:
 
         word = self.list[var["index"]]
         current_text = self.text_paragraph.get("1.0", tk.END)
-        tag_name = f"{self.list[var["index"]]}[{var['index']}:{var['count']}]"
+        tag_name = f"{self.list[var["index"]]}[{var['index']}:{var['p_index']}]"
         if reset:
             start = p_index - (len(word))
             end = start + len(word)
@@ -196,7 +196,7 @@ class TypingSpeedApp:
                 var["word"] = ""
             self.change_letter_color(p_index=var["p_index"], color="black")
         # BackSpace, text does not exist in entry box
-        else:
+        elif var["p_index"]:
             # if word count = 0 jump previous word in the LIST
             var["index"] -= 1
             var["index"] = max(var["index"],0)
