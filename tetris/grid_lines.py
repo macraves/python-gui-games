@@ -49,3 +49,31 @@ class Line(Turtle):
         self.setheading(180)
         var = {"x": -1, "y": 0}
         self.set_starting_point(top_left, var, square=square, distance=distance)
+
+    def right_up(self, square: Square, distance=100):
+        """docs"""
+        bottom_right = 1
+        self.setheading(90)
+        var = {"x": 1, "y": 0}
+        self.set_starting_point(bottom_right, var, square=square, distance=distance)
+
+    def right_down(self, square: Square, distance=100):
+        """docs"""
+        bottom_right = 3
+        self.setheading(270)
+        var = {"x": 1, "y": 0}
+        self.set_starting_point(bottom_right, var, square=square, distance=distance)
+
+    def left_up(self, square: Square, distance=100):
+        """docs"""
+        bottom_right = 0
+        self.setheading(90)
+        var = {"x": -1, "y": 0}
+        self.set_starting_point(bottom_right, var, square=square, distance=distance)
+
+    def left_down(self, square: Square, distance=100):
+        """docs"""
+        bottom_right = 2
+        self.setheading(270)
+        var = {"x": -1, "y": 0}
+        self.set_starting_point(bottom_right, var, square=square, distance=distance)

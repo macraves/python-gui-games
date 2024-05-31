@@ -1,7 +1,8 @@
 """Screen and Border Optimazation"""
 
 from turtle import Screen
-from grid_lines import Square, Line
+
+from shape_design import Shape
 
 
 WIDTH = 800
@@ -18,12 +19,16 @@ SCREEN.bgcolor("black")
 # SCREEN.tracer(0)
 
 
-square = Square(width=2, height=2)
-print([item.position() for item in square.squares])
-line = Line()
+shape = Shape()
+# print([item.position() for item in square.squares])
+# line = Line()
 
-line.go_right(square=square)
-line.go_left(square=square)
+# line.go_right(square=square)
+# line.go_left(square=square)
+# line.right_down(square=square)
+# line.right_up(square=square)
+# line.left_up(square=square)
+# line.left_down(square=square)
 
 
 # SCREEN.update()
