@@ -2,6 +2,8 @@
 
 from turtle import Turtle
 
+matrix = [["X" for _ in range(3)] for _ in range(3)]
+print(matrix)
 
 BINS = (0, -500)
 

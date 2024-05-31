@@ -13,6 +13,8 @@ from paddle_segment import Paddles
 
 from show_border import draw_borders
 
+BIN = (0, -500)
+
 TEST_SPEED = 0.05
 
 
@@ -102,13 +104,13 @@ while GAME_ON:
     # ball_blocks_collision(ball)
     # Missing the ball
     if ball.ycor() < -(BOTTOM_BOUNDRY + 50):
-        ball.goto(0, -800)
+        ball.goto(BIN)
         del ball
         # snap_shot(ball)
         MID_INDEX = len(paddle.segments) // 2
         middle = paddle.segments[MID_INDEX]
         ball = Ball(BALL_POSITION)
-        ball.reset_position(middle.position())
+        # ball.reset_position(middle.position())
         paddle.shrink()
 
 

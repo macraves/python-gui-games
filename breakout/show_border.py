@@ -1,4 +1,7 @@
-"""test for breakut window boundry"""
+"""test workbench
+-window boundry
+-snap shot
+-distance"""
 
 from turtle import Turtle
 

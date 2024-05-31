@@ -1,4 +1,4 @@
-"""Paddle"""
+"""Single Turtle Paddle object Test"""
 
 from turtle import Turtle
 
