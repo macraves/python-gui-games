@@ -49,4 +49,4 @@ class Square:
 
     def get_distance(self):
         """docs"""
-        return self.width * 10 * 2, self.height * 10 * 2
+        return self.width * 10 * 2 * 2, self.height * 10 * 2 * 2
