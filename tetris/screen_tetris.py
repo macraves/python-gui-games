@@ -1,8 +1,9 @@
 """Screen and Border Optimazation"""
 
+import time
 from turtle import Screen
 
-from shape_design import Shape
+from shape_matrix import Shape
 
 
 WIDTH = 800
@@ -16,10 +17,36 @@ SCREEN = Screen()
 SCREEN.setup(width=WIDTH, height=HEIGHT)
 SCREEN.title("Tetrs")
 SCREEN.bgcolor("black")
-# SCREEN.tracer(0)
+SCREEN.tracer(0)
+
+active_block = []
 
 
-shape = Shape()
+def create_shape():
+    """docs"""
+    shape = Shape()
+    name = "t_shape"
+    shape.create_the_shape(name)
+    active_block.append((name, shape))
+
+
+create_shape()
+shape_name, block = active_block[0]
+
+
+SCREEN.listen()
+SCREEN.onkey(lambda: block.clockwise(shape_name), "Right")
+GAME_SPEED = 0.5
+GAME_ON = True
+
+
+while GAME_ON:
+    time.sleep(GAME_SPEED)
+    SCREEN.update()
+    block.move(shape_name=shape_name)
+
+    # block.clockwise(shape_name)
+
 # print([item.position() for item in square.squares])
 # line = Line()
 

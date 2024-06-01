@@ -1,7 +1,7 @@
 """Grid test"""
 
 from turtle import Turtle
-from design_square import Square
+from square_large import Square
 
 
 class Line(Turtle):

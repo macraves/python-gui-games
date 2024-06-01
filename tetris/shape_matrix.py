@@ -66,7 +66,7 @@ class Shape:
 
     def move(self, shape_name):
         """docs"""
-        move_by = 5
+        move_by = 20
         turtles = self.shapes[shape_name]["turtles"]
         reversed_turtles = list(reversed(turtles))
         for square in reversed_turtles:

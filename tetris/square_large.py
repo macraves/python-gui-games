@@ -1,11 +1,9 @@
-"""Squre Test"""
+"""
+Squre Test
+(x,y)(x+distance + y)
+(x, y-distance), (x+distance, y-distance)"""
 
 from turtle import Turtle
-
-SQUARE = """
-(x,y)(x+distance + y)
-(x, y-distance), (x+distance, y-distance)
-"""
 
 
 class Square:

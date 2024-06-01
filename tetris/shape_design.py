@@ -23,9 +23,9 @@ class Shape:
     def __init__(self):
         self.starting_point = Square.starting_point
         self.colors = ["red", "blue", "green", "yellow"]
-        # self.create_line()
+        self.create_line()
         # self.create_cube()
-        self.create_t_shape()
+        # self.create_t_shape()
 
     def width_and_hight(self):
         """docs"""
@@ -81,3 +81,20 @@ class Shape:
 
 #     [x+z ,y+z]
 # [x, y][x+z, y][x, y]
+
+
+#       [x+z, y+z]
+#       [x+z, y][x+2z, y]
+#       [x-z, y-z]
+
+
+#        [x+z ,y+z]
+# [x,    y][x+z, y]
+#         [x+z, y-z]
+
+# [x,y][x+z,y][x+2z,y][x+3z,y]
+
+# [x,y]
+# [x, y-z]
+# [x, y-2z]
+# [x, y-3z]
