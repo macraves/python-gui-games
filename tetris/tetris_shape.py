@@ -20,9 +20,13 @@ class Shape:
         self.height = len(self.block)
         self.width = len(self.block[0])
 
-    def create_cube(self):
+    def shape_bottom_area(self):
+        """Calculates and returns last matrix of shape len"""
+        return len(self.block[-1])
+
+    def create_specific_shape(self, shape_name):
         """For test purpose get cube matrix"""
-        self.block = blocks["cube"]
+        self.block = blocks[shape_name]
         self.height = len(self.block)
         self.width = len(self.block[0])
 
