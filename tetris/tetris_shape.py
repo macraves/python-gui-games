@@ -3,6 +3,8 @@ Usage of Matrix where 1s for turtle stamp."""
 
 import random
 
+COLORS = ["red", "blue", "yellow", "lightblue", "purple"]
+
 blocks = {
     "cube": [[1, 1, 1] for _ in range(3)],
     "line": [[1 for _ in range(4)]],
@@ -19,6 +21,7 @@ class Shape:
         self.block = random.choice(list(blocks.values()))
         self.height = len(self.block)
         self.width = len(self.block[0])
+        self.color = random.choice(COLORS)
 
     def shape_bottom_list_len(self):
         """Calculates and returns last matrix of shape len"""

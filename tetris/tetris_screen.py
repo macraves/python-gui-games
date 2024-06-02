@@ -20,7 +20,7 @@ class Window:
         self.window.title("Tetris By Grids")
         self.window.setup(width=self.width, height=self.height)
         self.window.bgcolor("black")
-        self.grid = [[0 for _ in range(12)] for _ in range(6)]
+        self.grid = [[0 for _ in range(12)] for _ in range(24)]
         self.grid.append([1 for _ in range(12)])
         self.starting_row = 0
         self.starting_col = 0
@@ -50,7 +50,7 @@ class Window:
         self.grid[row] = [0 for _ in range(12)]
         print(f"{Window.count}. Reseted\n{self.pretty_grid()}")
 
-    def draw_grid(self, shape: Shape):
+    def place_shape(self, shape: Shape):
         """Put shape in in center of length and starts convert
         0s to 1s according given Shape"""
         column = self.start_in_column(shape=shape)
@@ -102,7 +102,7 @@ def place_shape():
     # pprint(block.block)
     window = Window(width=600, height=800)
     # print(f"New grid start row index: {window.starting_row}")
-    window.draw_grid(shape=block)
+    window.place_shape(shape=block)
     # print(window.pretty_grid())
     # print(f"New grid current row index: {window.starting_row}")
     window.move_down(shape=block)
@@ -114,6 +114,3 @@ def place_shape():
     window.move_down(shape=block)
     window.move_down(shape=block)
     # print(f"Last view\n{window.pretty_grid()}")
-
-
-place_shape()
