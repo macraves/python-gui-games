@@ -20,7 +20,7 @@ class Shape:
         self.height = len(self.block)
         self.width = len(self.block[0])
 
-    def shape_bottom_area(self):
+    def shape_bottom_list_len(self):
         """Calculates and returns last matrix of shape len"""
         return len(self.block[-1])
 
