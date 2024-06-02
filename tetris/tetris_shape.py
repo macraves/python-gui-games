@@ -4,7 +4,7 @@ Usage of Matrix where 1s for turtle stamp."""
 import random
 
 blocks = {
-    "square": [[1, 1, 1] for _ in range(3)],
+    "cube": [[1, 1, 1] for _ in range(3)],
     "line": [[1 for _ in range(4)]],
     "t": [[1, 1, 1], [0, 1, 0], [0, 0, 0]],
     "z": [[1, 1, 0], [0, 1, 0], [0, 1, 1]],
@@ -16,21 +16,28 @@ class Shape:
     Turtle(shape='square') by default width and height is 1 covers 20 pixel ares"""
 
     def __init__(self) -> None:
-        self.shape = random.choice(list(blocks.values()))
-        self.height = len(self.shape)
-        self.width = len(self.shape[0])
+        self.block = random.choice(list(blocks.values()))
+        self.height = len(self.block)
+        self.width = len(self.block[0])
+
+    def create_cube(self):
+        """For test purpose get cube matrix"""
+        self.block = blocks["cube"]
+        self.height = len(self.block)
+        self.width = len(self.block[0])
 
     def transpose_the_matrix(self):
         """Convert rows to columns, columns to rows
-        list of list to list of tuple"""
-        self.shape = list(zip(*self.shape))
+        list of list to list of tuple and updates
+        new order matrix of block"""
+        self.block = list(zip(*self.block))
 
     def clockwise(self):
         """Rotate by horizontally"""
         self.transpose_the_matrix()
-        self.shape = [list(reversed(row)) for row in self.shape]
+        self.block = [list(reversed(row)) for row in self.block]
 
     def anti_clockwise(self):
         """Rotate by vertically"""
         self.transpose_the_matrix()
-        self.shape = [list(row) for row in reversed(self.shape)]
+        self.block = [list(row) for row in reversed(self.block)]
