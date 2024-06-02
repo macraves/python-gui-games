@@ -22,7 +22,7 @@ class Window:
         self.window.title("Tetris By Grids")
         self.window.setup(width=self.width, height=self.height)
         self.window.bgcolor("black")
-        self.grid = [[0 for _ in range(12)] for _ in range(5)]
+        self.grid = [[0 for _ in range(12)] for _ in range(6)]
         self.starting_row = 0
         self.starting_col = 0
 
@@ -36,7 +36,6 @@ class Window:
 
     def place_matrix_value(self, row, col, shape):
         """docs"""
-
         for y, lst in enumerate(shape.block):
             for x, value in enumerate(lst):
                 self.grid[row + y][col + x] = value
@@ -47,14 +46,16 @@ class Window:
         column = self.start_in_column(shape=shape)
         # put shape values into grid
         self.place_matrix_value(row=self.starting_row, col=column, shape=shape)
-        # for y, row in enumerate(shape.block):
-        #     for x, value in enumerate(row):
-        #         self.grid[y][column + x] = value
-        pprint(self.grid)
         self.starting_row = shape.height
 
     def move_down(self, shape: Shape):
         """Updates starting point value according height of shape"""
+        if self.grid[self.starting_row][
+            self.starting_col : self.starting_col + shape.width
+        ] == [0 for _ in range(shape.width)]:
+            self.place_matrix_value(
+                row=self.starting_row, col=self.starting_col, shape=shape
+            )
 
 
 def place_shape():
@@ -65,6 +66,10 @@ def place_shape():
     print("GRID")
     window = Window(width=WIDTH, height=HEIGHT)
     window.draw_grid(shape=block)
+    pprint(window.grid)
+    print("Move BLOCK")
+    window.move_down(shape=block)
+    pprint(window.grid)
 
 
 place_shape()
