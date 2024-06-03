@@ -28,4 +28,8 @@ class Stamp(Turtle):
                 screen_x = left + (x * 20 * size)
                 screen_y = top - (y * 20 * size)
                 self.goto(screen_x, screen_y)
+                if cell:
+                    self.color(shape.color)
+                else:
+                    self.color(self.default_color)
                 self.stamp()

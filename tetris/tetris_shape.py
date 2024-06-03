@@ -8,8 +8,9 @@ COLORS = ["red", "blue", "yellow", "lightblue", "purple"]
 blocks = {
     "cube": [[1, 1, 1] for _ in range(3)],
     "line": [[1 for _ in range(4)]],
-    "t": [[1, 1, 1], [0, 1, 0], [0, 0, 0]],
+    "t": [[1, 1, 1], [0, 1, 0]],
     "z": [[1, 1, 0], [0, 1, 0], [0, 1, 1]],
+    "L": [[1, 1, 1], [0, 0, 1]],
 }
 
 
