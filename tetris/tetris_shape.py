@@ -22,7 +22,7 @@ class Shape:
         self.block = random.choice(list(blocks.values()))
         self.height = len(self.block)
         self.width = len(self.block[0])
-        self.color = random.choice(COLORS)
+        self.color = random.randint(1, 5)
         self.active = True
 
     def shape_bottom_list_len(self):

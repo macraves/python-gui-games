@@ -26,17 +26,19 @@ scr.window.onkey(shape.anti_clockwise, "Down")
 
 
 scr.starting_coordinates(shape=shape)
-stamp.draw_screen(width=WIDTH, height=HEIGHT, shape=shape, grid=scr.grid)
+stamp.draw_screen(width=WIDTH, height=HEIGHT, grid=scr.grid)
 
 
 while True:
     scr.window.update()
+
     if not shape.active:
         shape = Shape()
+
         scr.starting_coordinates(shape=shape)
     scr.move_down(shape=shape)
 
-    stamp.draw_screen(width=WIDTH, height=HEIGHT, shape=shape, grid=scr.grid)
+    stamp.draw_screen(width=WIDTH, height=HEIGHT, grid=scr.grid)
 
 
 scr.window.mainloop()

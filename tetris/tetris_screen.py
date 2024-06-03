@@ -11,7 +11,7 @@ class Window:
     """docs"""
 
     count = 0
-    flag = True
+    flag = False
 
     def __init__(self, width, height, square_size=1):
         self.width = width
@@ -21,7 +21,7 @@ class Window:
         self.window.title("Tetris By Grids")
         self.window.setup(width=self.width, height=self.height)
         self.window.bgcolor("black")
-        self.grid = [[0 for _ in range(12)] for _ in range(12)]
+        self.grid = [[0 for _ in range(12)] for _ in range(20)]
         self.starting_row = 0
         self.starting_col = 0
 
@@ -37,8 +37,8 @@ class Window:
         """docs"""
 
         for y, lst in enumerate((shape.block)):
-            for x, value in enumerate(lst):
-                self.grid[row + y][col + x] = value
+            for x, _ in enumerate(lst):
+                self.grid[row + y][col + x] = shape.color
         self.starting_row += 1
         if Window.flag:
             print(f"{Window.count}. Placed\n{self.pretty_grid()}")
@@ -139,11 +139,11 @@ class Window:
         self.move_down(shape=new_block)
 
 
-# def test_main():
-#     """docs"""
-#     scr = Window(width=600, height=800)
-#     design = Shape()
-#     scr.test_window(design)
+def test_main():
+    """docs"""
+    scr = Window(width=600, height=800)
+    design = Shape()
+    scr.test_window(design)
 
 
-# test_main()
+test_main()
