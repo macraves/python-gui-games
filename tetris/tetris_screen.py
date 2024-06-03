@@ -11,6 +11,7 @@ class Window:
     """docs"""
 
     count = 0
+    flag = True
 
     def __init__(self, width, height, square_size=1):
         self.width = width
@@ -20,7 +21,7 @@ class Window:
         self.window.title("Tetris By Grids")
         self.window.setup(width=self.width, height=self.height)
         self.window.bgcolor("black")
-        self.grid = [[0 for _ in range(12)] for _ in range(7)]
+        self.grid = [[0 for _ in range(12)] for _ in range(24)]
         self.starting_row = 0
         self.starting_col = 0
 
@@ -38,10 +39,11 @@ class Window:
             for x, value in enumerate(lst):
                 self.grid[row + y][col + x] = value
         self.starting_row += 1
-        print(f"{Window.count}. Placed\n{self.pretty_grid()}")
+        if Window.flag:
+            print(f"{Window.count}. Placed\n{self.pretty_grid()}")
 
     def reset_previous_grid_row(self, shape: Shape):
-        """Grid upper rows value set to 0"""
+        """docs"""
         if self.starting_row - 1 < 0:
             return
         row_to_check = self.starting_row - 1
@@ -50,8 +52,8 @@ class Window:
             for x, value in enumerate(row):
                 if self.grid[y + row_to_check][x + col_to_start] == value:
                     self.grid[y + row_to_check][x + col_to_start] = 0
-
-        print(f"{Window.count}. Reseted\n{self.pretty_grid()}")
+        if Window.flag:
+            print(f"{Window.count}. Reseted\n{self.pretty_grid()}")
 
     def does_the_bottom_of_the_shape_fit_on_the_line_below(self, row, shape: Shape):
         """_summary_"""
@@ -59,12 +61,6 @@ class Window:
         return self.grid[row][
             self.starting_col : self.starting_col + shape_bottom_row_len
         ] == [0 for _ in range(shape_bottom_row_len)]
-
-        # if self.starting_row == len(self.grid) - 1 and shape.height > 1:
-        #     return False
-        # return self.grid[shape.height + self.starting_row - 1][
-        #     self.starting_col : self.starting_col + shape_bottom_row_len
-        # ] == [0 for _ in range(shape_bottom_row_len)]
 
     def does_shape_width_fit_next_row(self, shape):
         """docs"""
@@ -85,14 +81,37 @@ class Window:
             return
         if not self.does_shape_width_fit_next_row(shape=shape):
             return
-        self.start_in_column(shape=shape)
 
         self.place_matrix_value(
             row=self.starting_row, col=self.starting_col, shape=shape
         )
 
+    def move_left(self, shape: Shape):
+        """Set column -1"""
+        if self.starting_col > 0:
+            self.reset_previous_grid_row(shape=shape)
+            self.starting_col -= 1
+
+    def move_right(self, shape: Shape):
+        """Set column -1"""
+        if self.starting_col + shape.width < len(self.grid[0]):
+            self.reset_previous_grid_row(shape=shape)
+            self.starting_col += 1
+
+    def clockwise(self, shape: Shape):
+        """Rotate by horizontally"""
+        self.reset_previous_grid_row(shape=shape)
+        shape.clockwise()
+
+    def anti_clockwise(self, shape: Shape):
+        """Rotate by vertically"""
+        self.reset_previous_grid_row(shape=shape)
+        shape.anti_clockwise()
+
     def pretty_grid(self):
         """docs"""
+        if not Window.flag:
+            return None
         Window.count += 1
         map_grid = map(lambda item: f"{item[0]}. {item[1]}", enumerate(self.grid))
         return "\n".join(map_grid)
