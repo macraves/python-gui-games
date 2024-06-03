@@ -21,12 +21,13 @@ class Window:
         self.window.title("Tetris By Grids")
         self.window.setup(width=self.width, height=self.height)
         self.window.bgcolor("black")
-        self.grid = [[0 for _ in range(12)] for _ in range(24)]
+        self.grid = [[0 for _ in range(12)] for _ in range(12)]
         self.starting_row = 0
         self.starting_col = 0
 
-    def start_in_column(self, shape: Shape):
+    def starting_coordinates(self, shape: Shape):
         """Calculate grid width to place Shape in the middle of the screen"""
+        self.starting_row = 0
         half_screen_width = len(self.grid[0]) // 2
         half_shape_width = shape.width // 2
         column = half_screen_width - half_shape_width - 1
@@ -34,7 +35,7 @@ class Window:
 
     def place_matrix_value(self, row, col, shape):
         """docs"""
-        self.reset_previous_grid_row(shape=shape)
+
         for y, lst in enumerate((shape.block)):
             for x, value in enumerate(lst):
                 self.grid[row + y][col + x] = value
@@ -42,16 +43,16 @@ class Window:
         if Window.flag:
             print(f"{Window.count}. Placed\n{self.pretty_grid()}")
 
-    def reset_previous_grid_row(self, shape: Shape):
+    def remove_shape_code(self, shape: Shape):
         """docs"""
         if self.starting_row - 1 < 0:
             return
         row_to_check = self.starting_row - 1
         col_to_start = self.starting_col
         for y, row in enumerate(shape.block):
-            for x, value in enumerate(row):
-                if self.grid[y + row_to_check][x + col_to_start] == value:
-                    self.grid[y + row_to_check][x + col_to_start] = 0
+            for x, _ in enumerate(row):
+                self.grid[y + row_to_check][x + col_to_start] = 0
+
         if Window.flag:
             print(f"{Window.count}. Reseted\n{self.pretty_grid()}")
 
@@ -66,7 +67,7 @@ class Window:
         """docs"""
         next_row = self.starting_row + shape.height - 1
         if next_row > len(self.grid) - 1:
-            return
+            return False
         if not self.does_the_bottom_of_the_shape_fit_on_the_line_below(
             row=next_row, shape=shape
         ):
@@ -78,10 +79,12 @@ class Window:
     def move_down(self, shape: Shape):
         """Updates starting point value according height of shape"""
         if self.starting_row > len(self.grid) - 1:
+            shape.active = False
             return
         if not self.does_shape_width_fit_next_row(shape=shape):
+            shape.active = False
             return
-
+        self.remove_shape_code(shape=shape)
         self.place_matrix_value(
             row=self.starting_row, col=self.starting_col, shape=shape
         )
@@ -89,51 +92,58 @@ class Window:
     def move_left(self, shape: Shape):
         """Set column -1"""
         if self.starting_col > 0:
-            self.reset_previous_grid_row(shape=shape)
+            self.remove_shape_code(shape=shape)
             self.starting_col -= 1
 
     def move_right(self, shape: Shape):
         """Set column -1"""
         if self.starting_col + shape.width < len(self.grid[0]):
-            self.reset_previous_grid_row(shape=shape)
+            self.remove_shape_code(shape=shape)
             self.starting_col += 1
 
     def clockwise(self, shape: Shape):
         """Rotate by horizontally"""
-        self.reset_previous_grid_row(shape=shape)
+        self.remove_shape_code(shape=shape)
         shape.clockwise()
 
     def anti_clockwise(self, shape: Shape):
         """Rotate by vertically"""
-        self.reset_previous_grid_row(shape=shape)
+        self.remove_shape_code(shape=shape)
         shape.anti_clockwise()
 
     def pretty_grid(self):
         """docs"""
-        if not Window.flag:
-            return None
         Window.count += 1
-        map_grid = map(lambda item: f"{item[0]}. {item[1]}", enumerate(self.grid))
-        return "\n".join(map_grid)
+        if Window.flag:
+            map_grid = map(lambda item: f"{item[0]}. {item[1]}", enumerate(self.grid))
+            return "\n".join(map_grid)
+
+    def test_window(self, block):
+        """docs"""
+        block = Shape()
+        new_block = Shape()
+        # block.create_specific_shape("z")
+        # pprint(block.block)
+        # window = Window(width=600, height=800)
+        # print(f"New grid start row index: {window.starting_row}")
+        self.move_down(shape=block)
+        self.clockwise(block)
+        # print(window.pretty_grid())
+        # print(f"New grid current row index: {window.starting_row}")
+        self.move_down(shape=block)
+        self.move_down(shape=block)
+        self.clockwise(block)
+        # print(f"New grid current row index: {window.starting_row}")
+        self.move_down(shape=new_block)
+        self.clockwise(block)
+        self.move_down(shape=new_block)
 
 
-def place_shape():
-    """docs"""
-    block = Shape()
-    block.create_specific_shape("L")
-    # pprint(block.block)
-    window = Window(width=600, height=800)
-    # print(f"New grid start row index: {window.starting_row}")
-    window.move_down(shape=block)
-    # print(window.pretty_grid())
-    # print(f"New grid current row index: {window.starting_row}")
-    window.move_down(shape=block)
-    # print(f"New grid current row index: {window.starting_row}")
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    window.move_down(shape=block)
-    # print(f"Last view\n{window.pretty_grid()}")
+# def test_main():
+#     """docs"""
+#     scr = Window(width=600, height=800)
+#     design = Shape()
+#     scr.test_window(design)
+
+
+# test_main()

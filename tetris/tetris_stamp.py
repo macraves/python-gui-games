@@ -6,6 +6,8 @@ from turtle import Turtle
 PAD_TOP = 150
 PAD_X = 190
 
+COLORS = ["green", "red", "blue", "yellow", "lightblue", "purple"]
+
 
 class Stamp(Turtle):
     """docs"""
@@ -14,22 +16,21 @@ class Stamp(Turtle):
         super().__init__()
         self.penup()
         self.shape("square")
-        self.default_color = "green"
-        self.color(self.default_color)
+        self.color(COLORS[0])
         self.speed(0)
 
-    def draw_grid(self, width, height, shape, grid, size=1):
+    def draw_screen(self, width, height, grid):
         """docs"""
-        top = height // 2 - (PAD_TOP // size)
-        left = -(width // 2) + (PAD_X // size)
+        top = height // 2 - (PAD_TOP)
+        left = -(width // 2) + (PAD_X)
 
         for y, row in enumerate(grid):
             for x, cell in enumerate(row):
-                screen_x = left + (x * 20 * size)
-                screen_y = top - (y * 20 * size)
+                screen_x = left + (x * 20)
+                screen_y = top - (y * 20)
                 self.goto(screen_x, screen_y)
                 if cell:
-                    self.color(shape.color)
+                    self.color(COLORS[cell])
                 else:
-                    self.color(self.default_color)
+                    self.color(COLORS[0])
                 self.stamp()

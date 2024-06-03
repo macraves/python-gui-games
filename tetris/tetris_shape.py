@@ -23,6 +23,7 @@ class Shape:
         self.height = len(self.block)
         self.width = len(self.block[0])
         self.color = random.choice(COLORS)
+        self.active = True
 
     def shape_bottom_list_len(self):
         """Calculates and returns last matrix of shape len"""
