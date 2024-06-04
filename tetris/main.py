@@ -17,8 +17,8 @@ scr.window.listen()
 
 stamp = Stamp()
 shape = Shape()
-shape.create_specific_shape("line")
-
+NAME = "cube"
+shape.create_specific_shape(NAME)
 
 scr.window.onkey(lambda: scr.move_left(shape), "Left")
 scr.window.onkey(lambda: scr.move_right(shape), "Right")
@@ -32,11 +32,11 @@ stamp.draw_screen(width=WIDTH, height=HEIGHT, grid=scr.grid)
 
 while True:
     scr.window.update()
-
     if not shape.active:
         shape = Shape()
-
+        shape.create_specific_shape(NAME)
         scr.starting_coordinates(shape=shape)
+
     scr.move_down(shape=shape)
 
     stamp.draw_screen(width=WIDTH, height=HEIGHT, grid=scr.grid)
