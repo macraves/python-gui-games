@@ -20,7 +20,7 @@ class Stamp(Turtle):
         self.speed(0)
 
     def draw_screen(self, width, height, grid):
-        """docs"""
+        """Every loop it is called to draw the grid according column value"""
         top = height // 2 - (PAD_TOP)
         left = -(width // 2) + (PAD_X)
 

@@ -31,11 +31,11 @@ class Shape:
         self.block = [[self.color if num else 0 for num in row] for row in self.block]
 
     def shape_height(self):
-        """docs"""
+        """get current shape height"""
         return len(self.block)
 
     def shape_width(self):
-        """docs"""
+        """get current shape width"""
         return len(self.block[0])
 
     def shape_bottom_list_len(self):

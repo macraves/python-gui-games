@@ -10,10 +10,10 @@ WIDTH = 12
 
 
 class Window:
-    """docs"""
+    """Handles the Tetris game window and game logic."""
 
     count = 0
-    flag = True
+    flag = False
 
     def __init__(self, width, height, square_size=1):
         self.width = width
@@ -28,7 +28,7 @@ class Window:
         self.starting_col = 0
 
     def check_row_is_full(self):
-        """docs"""
+        """Removes full rows and shifts above rows down."""
         for i, row in enumerate(self.grid):
             if all(num != 0 for num in row):
                 self.grid[i] = [0] * WIDTH
@@ -36,7 +36,7 @@ class Window:
                     self.grid[j], self.grid[j - 1] = self.grid[j - 1], self.grid[j]
 
     def starting_coordinates(self, shape: Shape):
-        """Calculate grid width to place Shape in the middle of the screen"""
+        """Calculates starting position for a shape to be centered."""
         self.starting_row = 0
         half_screen_width = len(self.grid[0]) // 2
         half_shape_width = shape.shape_width() // 2
@@ -44,8 +44,7 @@ class Window:
         self.starting_col = column
 
     def place_matrix_value(self, row, col, shape: Shape):
-        """docs"""
-
+        """Places shape's color codes in the grid."""
         for y, lst in enumerate((shape.block)):
             # self.grid[row + y][col : col + shape.shape_width()] = lst
             for x, value in enumerate(lst):
@@ -57,19 +56,8 @@ class Window:
         if Window.flag:
             print(f"{Window.count}. Placed\n{self.pretty_grid()}")
 
-    def reset_the_bellow_row(self, shape: Shape):
-        """docs"""
-        if self.starting_row - 1 < 0:
-            return
-        previous_row = self.starting_row - 1
-        self.grid[previous_row][
-            self.starting_col : self.starting_col + shape.shape_width()
-        ] = [0] * (shape.shape_width())
-        if Window.flag:
-            print(f"{Window.count}. Reseted\n{self.pretty_grid()}")
-
     def remove_shape_code(self, shape: Shape):
-        """docs"""
+        """Removes shape's color codes from the grid."""
         if self.starting_row - 1 < 0:
             return
         row_to_check = self.starting_row - 1
@@ -80,36 +68,8 @@ class Window:
                     continue
                 if self.grid[y + row_to_check][x + col_to_start] == value:
                     self.grid[y + row_to_check][x + col_to_start] = 0
-        # for y, _ in enumerate(shape.block):
-        #     till = col_to_start + shape.shape_width()
-        #     self.grid[y + row_to_check][col_to_start:till] = [0] * (till - col_to_start)
-
         if Window.flag:
             print(f"{Window.count}. Removed\n{self.pretty_grid()}")
-
-    def does_the_bottom_of_the_shape_fit_on_the_line_below(self, row, shape: Shape):
-        """_summary_"""
-        shape_bottom_row_len = shape.shape_bottom_list_len()
-        return (
-            self.grid[row][self.starting_col : self.starting_col + shape_bottom_row_len]
-            == [0] * shape_bottom_row_len
-        )
-
-    def does_shape_width_fit_next_row(self, shape):
-        """docs"""
-        next_row = self.starting_row + shape.shape_height() - 1
-        if next_row > len(self.grid) - 1:
-            return False
-        if not self.does_the_bottom_of_the_shape_fit_on_the_line_below(
-            row=next_row, shape=shape
-        ):
-            return False
-        return (
-            self.grid[next_row][
-                self.starting_col : self.starting_col + shape.shape_width()
-            ]
-            == [0] * shape.shape_width()
-        )
 
     def can_shape_move_down(self, shape: Shape):
         """docs"""
