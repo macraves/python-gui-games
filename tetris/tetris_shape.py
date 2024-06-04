@@ -7,7 +7,7 @@ COLORS = ["red", "blue", "yellow", "lightblue", "purple"]
 
 blocks = {
     "cube": [[1, 1, 1] for _ in range(3)],
-    "line": [[1 for _ in range(4)]],
+    "line": [[1, 1, 1, 1]],
     "t": [[1, 1, 1], [0, 1, 0]],
     "z": [[1, 1, 0], [0, 1, 0], [0, 1, 1]],
     "L": [[1, 1, 1], [0, 0, 1]],
@@ -20,10 +20,21 @@ class Shape:
 
     def __init__(self) -> None:
         self.block = random.choice(list(blocks.values()))
-        self.height = len(self.block)
-        self.width = len(self.block[0])
         self.color = random.randint(1, 5)
         self.active = True
+        self.replace_with_color_code()
+
+    def replace_with_color_code(self):
+        """docs"""
+        self.block = [[self.color if num else 0 for num in row] for row in self.block]
+
+    def shape_height(self):
+        """docs"""
+        return len(self.block)
+
+    def shape_width(self):
+        """docs"""
+        return len(self.block[0])
 
     def shape_bottom_list_len(self):
         """Calculates and returns last matrix of shape len"""
@@ -32,8 +43,6 @@ class Shape:
     def create_specific_shape(self, shape_name):
         """For test purpose get cube matrix"""
         self.block = blocks[shape_name]
-        self.height = len(self.block)
-        self.width = len(self.block[0])
 
     def transpose_the_matrix(self):
         """Convert rows to columns, columns to rows

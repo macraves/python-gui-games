@@ -1,5 +1,6 @@
 """Painting Part"""
 
+from pprint import pprint
 from tetris_screen import Window
 from tetris_shape import Shape
 from tetris_stamp import Stamp
@@ -16,13 +17,13 @@ scr.window.listen()
 
 stamp = Stamp()
 shape = Shape()
-shape.create_specific_shape("z")
+shape.create_specific_shape("line")
 
 
 scr.window.onkey(lambda: scr.move_left(shape), "Left")
 scr.window.onkey(lambda: scr.move_right(shape), "Right")
-scr.window.onkey(shape.clockwise, "Up")
-scr.window.onkey(shape.anti_clockwise, "Down")
+scr.window.onkey(lambda: scr.clockwise(shape), "Up")
+scr.window.onkey(lambda: scr.anti_clockwise(shape), "Down")
 
 
 scr.starting_coordinates(shape=shape)
@@ -39,6 +40,8 @@ while True:
     scr.move_down(shape=shape)
 
     stamp.draw_screen(width=WIDTH, height=HEIGHT, grid=scr.grid)
+    # scr.check_row_is_full()
+    # pprint(shape.block)
 
 
 scr.window.mainloop()
