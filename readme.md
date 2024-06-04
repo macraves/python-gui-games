@@ -10,3 +10,7 @@ For the Tetris game, the recorded git log entries provided a good reference for 
 ### Conclusion
 
 In graphic design, it is crucial to understand the working principles and draft a blueprint accordingly. Due to the slowdown caused by the Turtle module (Consider pre-rendering blocks or using an alternative graphical library like Pygame for better performance), the program was developed solely to place blocks correctly, without adding score and other features.
+
+## Typin Test
+
+An application with a tasteful design but a bit of a challenge to add a rich look.
